@@ -1,79 +1,58 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# This workflow will do a clean installation of node dependencies,
+# build the source code, run tests, and then build & push Docker image.
 
-name: Node.js CI/CD Pipeline
+name: Node.js CI + Docker
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
 
 jobs:
-  # Job untuk testing aplikasi Node.js di berbagai versi
-  test:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      # Checkout source code dari repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Node.js dengan versi yang ditentukan di matrix
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm" # Cache npm dependencies untuk mempercepat build
+          cache: 'npm'
 
-      # Install dependencies menggunakan npm ci (clean install)
       - name: Install dependencies
         run: npm ci
 
-      # Build aplikasi jika ada script build
-      - name: Build application
+      - name: Build project
         run: npm run build --if-present
 
-      # Jalankan test suite
       - name: Run tests
         run: npm test
 
-  # Job untuk build dan push Docker image (hanya jalan di push ke main branch)
-  docker-build-push:
-    # Job ini hanya berjalan setelah test berhasil
-    needs: test
+  docker:
     runs-on: ubuntu-latest
-    # Hanya jalankan untuk push ke main branch, tidak untuk pull request
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
+    needs: build
     steps:
-      # Checkout source code dari repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Docker Buildx untuk advanced build features
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # Login ke Docker Hub menggunakan credentials dari secrets
-      - name: Login to Docker Hub
+      - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build Docker image dan push ke Docker Hub
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: . # Build context adalah root directory
-          push: true # Push image ke registry setelah build
-          tags: hidayatnurr/praktikum-popl-asleb:latest # Tag untuk Docker image
-          platforms: linux/amd64,linux/arm64 # Build untuk multiple architectures
-          cache-from: type=gha # Gunakan GitHub Actions cache
-          cache-to: type=gha,mode=max # Save cache untuk build selanjutnya
+      - name: Build Docker image
+        run: |
+          docker build -t dockerhubusername/praktikum-popl-cicd-nodejs:latest .
+
+      - name: Push Docker image
+        run: |
+          docker push dockerhubusername/praktikum-popl-cicd-nodejs:latest
