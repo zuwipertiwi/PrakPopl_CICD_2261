@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes App</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>📝 My Notes App</h1>
+        <p>Simple note-taking application</p>
+      </header>
+
+      <main>
+        <!-- Add Note Form -->
+        <section class="add-note-section">
+          <h2>Add New Note</h2>
+          <form id="noteForm" class="note-form">
+            <div class="form-group">
+              <label for="noteTitle">Title:</label>
+              <input
+                type="text"
+                id="noteTitle"
+                name="title"
+                placeholder="Enter note title..."
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="noteContent">Content:</label>
+              <textarea
+                id="noteContent"
+                name="content"
+                placeholder="Write your note here..."
+                required
+                rows="4"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <span id="btnText">Add Note</span>
+              <span id="btnSpinner" class="spinner" style="display: none"
+                >⏳</span
+              >
+            </button>
+            <button
+              type="button"
+              id="cancelBtn"
+              class="btn btn-secondary"
+              style="display: none"
+            >
+              Cancel
+            </button>
+          </form>
+        </section>
+
+        <!-- Notes List -->
+        <section class="notes-section">
+          <div class="notes-header">
+            <h2>Your Notes</h2>
+            <span id="notesCount" class="notes-count">0 notes</span>
+          </div>
+
+          <div id="notesContainer" class="notes-container">
+            <div id="loadingMessage" class="loading-message">
+              <p>📚 Loading your notes...</p>
+            </div>
+            <div id="emptyMessage" class="empty-message" style="display: none">
+              <p>📝 No notes yet. Add your first note above!</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>&copy; 2025 Notes App | Built with ❤️</p>
+      </footer>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Edit Note</h3>
+          <span class="close">&times;</span>
+        </div>
+        <form id="editForm" class="note-form">
+          <div class="form-group">
+            <label for="editTitle">Title:</label>
+            <input type="text" id="editTitle" name="title" required />
+          </div>
+          <div class="form-group">
+            <label for="editContent">Content:</label>
+            <textarea
+              id="editContent"
+              name="content"
+              required
+              rows="4"
+            ></textarea>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary">Update Note</button>
+            <button type="button" class="btn btn-secondary cancel-edit">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification" style="display: none">
+      <span id="notificationMessage"></span>
+      <button id="closeNotification" class="close-notification">&times;</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
