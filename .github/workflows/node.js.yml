@@ -5,9 +5,9 @@ name: Node.js CI + Docker
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -51,8 +51,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t dockerhubusername/praktikum-popl-cicd-nodejs:latest .
+          docker build -t dockerhubusername/praktikum-popl-nodejs:latest .
 
       - name: Push Docker image
         run: |
-          docker push dockerhubusername/praktikum-popl-cicd-nodejs:latest
+          docker push dockerhubusername/praktikum-popl-nodejs:latest
